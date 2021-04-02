@@ -42,14 +42,10 @@ export function setupStaticGeneration (nuxt: any, options: ModuleOptions) {
 }
 
 async function downloadImage ({ url, name, outDir }) {
-  try {
-    const response = await fetch(url)
-    if (!response.ok) { throw new Error(`Unexpected response ${response.statusText}`) }
-    const dstFile = join(outDir, name)
-    await mkdirp(dirname(dstFile))
-    await pipeline(response.body, createWriteStream(dstFile))
-    logger.success('Generated static image ' + relative(process.cwd(), dstFile))
-  } catch (error) {
-    logger.error(error.message)
-  }
+  const response = await fetch(url)
+  if (!response.ok) { throw new Error(`Unexpected response ${response.statusText} for ${url}`) }
+  const dstFile = join(outDir, name)
+  await mkdirp(dirname(dstFile))
+  await pipeline(response.body, createWriteStream(dstFile))
+  logger.success('Generated static image ' + relative(process.cwd(), dstFile))
 }
